@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}<title>Просмотр категории</title>{% endblock title %}
+{% block content %}
+<div class="container">
+    <h1>{{ category.name }}</h1>
+    <p>{{ category.template }}</p>
+
+    <a class="btn btn-primary mb-3"
+       href="{{ url_for('add_variable', category_id=category.id) }}">
+        Добавить переменную
+    </a>
+
+    {% for variable in category.variables %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h4>{{ variable.label }}</h4>
+
+                <p>Техническое имя: {{ variable.name }}</p>
+                <p>Тип поля: {{ variable.field_type }}</p>
+                <p>Обязательное: {{ "Да" if variable.required else "Нет" }}</p>
+
+                <a class="btn btn-outline-primary mb-3"
+                   href="{{ url_for('add_option', variable_id=variable.id) }}">
+                    Добавить опцию
+                </a>
+
+                {% for option in variable.options %}
+                    <p>
+                        {{ option.value }} → {{ option.output_value }}
+                    </p>
+                {% else %}
+                    <p class="text-muted">Опции пока не добавлены.</p>
+                {% endfor %}
+            </div>
+        </div>
+    {% else %}
+        <p class="text-muted">Переменные пока не добавлены.</p>
+    {% endfor %}
+    <a class="btn btn-success"
+   href="{{ url_for('fill_category', category_id=category.id) }}">
+    Заполнить дневник
+    </a>
+</div>
+{% endblock content %}

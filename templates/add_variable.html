@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Add Variable{% endblock %}
+{% block content %}
+<div class="container">
+  <h2>Добавление переменной</h2>
+  <form method="POST">
+    {{ form.csrf_token }}
+    {{ form.name(class="form-control form-control-lg py-3 mb-3", placeholder=form.name.label.text) }}
+    {{ form.label(class="form-control form-control-lg py-3 mb-3", placeholder=form.label.label.text) }}
+    {{ form.field_type(class="form-control form-control-lg py-3 mb-3", placeholder=form.field_type.label.text) }}
+    <div class="form-check mb-3">
+    {{ form.required(class="form-check-input") }}
+    {{ form.required.label(class="form-check-label") }}     
+    </div>  
+    {{ form.submit(class="btn btn-primary px-5 py-3") }}
+  </form>
+</div>
+{% endblock content %}

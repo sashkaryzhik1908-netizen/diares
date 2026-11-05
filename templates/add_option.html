@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <h2>Добавление опции: {{ variable.label }}</h2>
+  <form method="POST">
+    {{ form.csrf_token }}
+    {{ form.value(class="form-control form-control-lg py-3 mb-3", placeholder=form.value.label.text) }}
+    {{ form.output_value(class="form-control form-control-lg py-3 mb-3", placeholder=form.output_value.label.text) }}
+    {{ form.order(class="form-control form-control-lg py-3 mb-3", placeholder=form.order.label.text) }}
+    {{ form.submit(class="btn btn-primary px-5 py-3") }}
+  </form>
+</div>
+{% endblock content %}

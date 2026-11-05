@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}<title>Формы</title>{% endblock title %}
+{% block content %}
+<div class="container">
+  <h2>Добавление категории</h2>
+  <form method="POST">
+    {{ form.csrf_token }}
+    {{ form.name(class="form-control form-control-lg py-3 mb-3", placeholder=form.name.label.text) }}
+    {{ form.slug(class="form-control form-control-lg py-3 mb-3", placeholder=form.slug.label.text) }}
+    {{ form.order(class="form-control form-control-lg py-3 mb-3", placeholder=form.order.label.text) }}
+    {{ form.template(class="form-control form-control-lg py-3 mb-3", placeholder=form.template.label.text, rows="3", cols="40") }}
+    {{ form.submit(class="btn btn-primary px-5 py-3") }}
+  </form> 
+</div>
+{% endblock content %}

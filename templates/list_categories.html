@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}<title>My Study Diaries</title>{% endblock title %}
+{% block content %}
+{% for category in categories %}
+  <div class="container">
+    <h2><a href="{{ url_for('view_category', category_id=category.id) }}">{{ category.name }}</a></h2>
+    <p>{{ category.template }}</p>
+  </div>
+{% endfor %}
+{% endblock content %}
