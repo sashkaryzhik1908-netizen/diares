@@ -173,21 +173,6 @@ def add_category():
     return render_template("add_category.html", form=form)
 
 
-@app.route("/categories/<int:category_id>/fill")
-def fill_category(category_id):
-    category = Category.query.get_or_404(category_id)
-
-    variables = TemplateVariable.query.filter_by(
-        category_id=category.id
-    ).all()
-
-    return render_template(
-        "fill_category.html",
-        category=category,
-        variables=variables
-    )
-
-
 @app.route("/categories/<int:category_id>/add_variable", methods=["GET", "POST"])
 def add_variable(category_id):
     category = Category.query.get_or_404(category_id)
@@ -221,7 +206,6 @@ def add_option(variable_id):
         db.session.commit()
         return redirect(url_for("view_category", category_id=variable.category_id))
     return render_template("add_option.html", form=form, variable=variable)
-
 
 
 @app.route("/categories")
