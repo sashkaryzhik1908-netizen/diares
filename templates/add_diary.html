@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}
+<title>Создание дневника</title>
+{% endblock title %}
+
+{% block content %}
+
+<div class="container">
+    <h1>Создание медицинского дневника</h1>
+
+    {% for category in categories %}
+
+        <div class="card mb-3">
+            <div class="card-body">
+
+                <h5>{{ category.name }}</h5>
+
+                <a class="btn btn-primary"
+                   href="#">
+                    Заполнить
+                </a>
+
+            </div>
+        </div>
+
+    {% endfor %}
+</div>
+
+{% endblock content %}

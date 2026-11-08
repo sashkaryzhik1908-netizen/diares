@@ -9,7 +9,6 @@
        href="{{ url_for('add_variable', category_id=category.id) }}">
         Добавить переменную
     </a>
-
     {% for variable in category.variables %}
         <div class="card mb-3">
             <div class="card-body">
@@ -36,9 +35,5 @@
     {% else %}
         <p class="text-muted">Переменные пока не добавлены.</p>
     {% endfor %}
-    <a class="btn btn-success"
-   href="{{ url_for('fill_category', category_id=category.id) }}">
-    Заполнить дневник
-    </a>
 </div>
 {% endblock content %}

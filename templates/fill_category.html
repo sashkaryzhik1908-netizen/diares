@@ -1,0 +1,251 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+<title>Заполнение категории</title>
+{% endblock title %}
+
+{% block content %}
+<div class="container">
+
+    <h1 class="mb-4">{{ category.name }}</h1>
+
+    {% if errors %}
+        <div class="alert alert-danger">
+            {% for error in errors %}
+                <p class="mb-1">{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="POST">
+
+        {% for variable in category.variables %}
+
+            <div class="card mb-3">
+                <div class="card-body">
+
+                    <label class="form-label fw-bold">
+                        {{ variable.label }}
+                    </label>
+
+                    {% if variable.field_type == "select" %}
+
+                        <select
+                            class="form-select"
+                            name="{{ variable.name }}"
+                            {% if variable.required %}required{% endif %}
+                        >
+                            <option value="">Выберите вариант</option>
+
+                            {% for option in variable.options|sort(attribute="order") %}
+                                <option
+                                    value="{{ option.value }}"
+                                    {% if values.get(variable.name) == option.output_value %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ option.value }}
+                                </option>
+                            {% endfor %}
+                        </select>
+
+                    {% elif variable.field_type == "multiselect" %}
+
+                        <select
+                            class="form-select mb-3"
+                            id="select_{{ variable.name }}"
+                        >
+                            <option value="">Выберите вариант</option>
+
+                            {% for option in variable.options|sort(attribute="order") %}
+                                <option value="{{ option.id }}">
+                                    {{ option.value }}
+                                </option>
+                            {% endfor %}
+                        </select>
+
+                        <button
+                            type="button"
+                            class="btn btn-outline-primary mb-3"
+                            onclick="addOption('{{ variable.name }}')"
+                        >
+                            Добавить
+                        </button>
+
+                        <ul
+                            class="list-group mb-3"
+                            id="selected_{{ variable.name }}"
+                        ></ul>
+
+                        <input
+                            type="hidden"
+                            name="{{ variable.name }}"
+                            id="result_{{ variable.name }}"
+                        >
+
+                    {% elif variable.field_type == "text" %}
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            name="{{ variable.name }}"
+                            value="{{ values.get(variable.name, '') }}"
+                            {% if variable.required %}required{% endif %}
+                        >
+
+                    {% elif variable.field_type == "number" %}
+
+                        <input
+                            type="number"
+                            step="any"
+                            class="form-control"
+                            name="{{ variable.name }}"
+                            value="{{ values.get(variable.name, '') }}"
+                            {% if variable.required %}required{% endif %}
+                        >
+
+                    {% endif %}
+
+                </div>
+            </div>
+
+        {% endfor %}
+
+        {% if category.slug == "complaints" %}
+            <div class="card mb-3">
+                <div class="card-body">
+
+                    <label class="form-label fw-bold">
+                        Дополнительные жалобы
+                    </label>
+
+                    <textarea
+                        class="form-control"
+                        name="custom_complaints"
+                        rows="3"
+                        placeholder="Введите дополнительные жалобы..."
+                    >{{ values.get('custom_complaints', '') }}</textarea>
+
+                </div>
+            </div>
+        {% endif %}
+
+        <button type="submit" class="btn btn-success">
+            Сгенерировать текст
+        </button>
+
+    </form>
+
+    {% if generated_text %}
+        <div class="card mt-4">
+            <div class="card-body">
+                <h4>Результат</h4>
+                <p>{{ generated_text }}</p>
+            </div>
+        </div>
+    {% endif %}
+
+</div>
+
+<script>
+function addOption(variableName) {
+    const select = document.getElementById("select_" + variableName);
+    const list = document.getElementById("selected_" + variableName);
+    const result = document.getElementById("result_" + variableName);
+
+    const optionId = select.value;
+
+    if (!optionId) return;
+
+    const exists = Array.from(list.children).some(
+        item => item.dataset.id === optionId
+    );
+
+    if (exists) return;
+
+    const optionText = select.options[select.selectedIndex].text;
+
+    const item = document.createElement("li");
+    item.className = "list-group-item d-flex justify-content-between align-items-center";
+    item.dataset.id = optionId;
+
+    const text = document.createElement("span");
+    text.textContent = optionText;
+
+    const buttons = document.createElement("div");
+
+    const upButton = document.createElement("button");
+    upButton.type = "button";
+    upButton.className = "btn btn-sm btn-outline-secondary me-1";
+    upButton.textContent = "↑";
+    upButton.onclick = function () {
+        moveUp(item);
+    };
+
+    const downButton = document.createElement("button");
+    downButton.type = "button";
+    downButton.className = "btn btn-sm btn-outline-secondary me-1";
+    downButton.textContent = "↓";
+    downButton.onclick = function () {
+        moveDown(item);
+    };
+
+    const removeButton = document.createElement("button");
+    removeButton.type = "button";
+    removeButton.className = "btn btn-sm btn-outline-danger";
+    removeButton.textContent = "Удалить";
+    removeButton.onclick = function () {
+        item.remove();
+        updateResult(list, result);
+    };
+
+    buttons.append(upButton, downButton, removeButton);
+    item.append(text, buttons);
+
+    list.appendChild(item);
+
+    updateResult(list, result);
+}
+
+
+function moveUp(item) {
+    const previous = item.previousElementSibling;
+
+    if (previous) {
+        item.parentNode.insertBefore(item, previous);
+    }
+
+    const list = item.parentNode;
+    const variableName = list.id.replace("selected_", "");
+    const result = document.getElementById("result_" + variableName);
+
+    updateResult(list, result);
+}
+
+
+function moveDown(item) {
+    const next = item.nextElementSibling;
+
+    if (next) {
+        item.parentNode.insertBefore(next, item);
+    }
+
+    const list = item.parentNode;
+    const variableName = list.id.replace("selected_", "");
+    const result = document.getElementById("result_" + variableName);
+
+    updateResult(list, result);
+}
+
+
+function updateResult(list, result) {
+    const selectedIds = Array.from(list.children).map(
+        item => item.dataset.id
+    );
+
+    result.value = selectedIds.join(",");
+}
+</script>
+
+{% endblock content %}
