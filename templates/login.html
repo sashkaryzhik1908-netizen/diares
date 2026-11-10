@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}<title>Вход</title>{% endblock title %}
+{% block content %}
+<div class="container">
+  <form action="{{ url_for('login') }}" method="POST">
+    {{ form.csrf_token }}
+    {{ form.username(class="form-control form-control-lg py-3 mb-3", placeholder=form.username.label.text) }}
+    {{ form.password(class="form-control form-control-lg py-3 mb-3", placeholder=form.password.label.text) }}
+    {% if error %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{ error }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+{% endif %}
+    {{ form.submit(class="btn btn-primary px-5 py-3") }}
+  </form>
+</div>
+{% endblock content %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}<title>Регистрация</title>{% endblock title %}
+{% block content %}
+<div class="container">
+  <form method="POST">
+    {{ form.csrf_token }}
+    {{ form.username(class="form-control form-control-lg py-3 mb-3", placeholder=form.username.label.text) }}
+    {{ form.password(class="form-control form-control-lg py-3 mb-3", placeholder=form.password.label.text) }}
+    {{ form.confirm(class="form-control form-control-lg py-3 mb-3", placeholder=form.confirm.label.text) }}
+    {{ form.submit(class="btn btn-primary px-5 py-3") }}
+  </form>
+</div>
+{% endblock content %}

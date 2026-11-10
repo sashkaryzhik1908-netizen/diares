@@ -1,8 +1,11 @@
 {% extends "base.html" %}
-{% block title %}Add Variable{% endblock %}
 {% block content %}
 <div class="container">
-  <h2>Добавление переменной</h2>
+  {% if 'edit' in request.path %}
+    <h2>Редактирование переменной</h2>
+  {% else %}
+    <h2>Добавление переменной</h2>
+  {% endif %}
   <form method="POST">
     {{ form.csrf_token }}
     {{ form.name(class="form-control form-control-lg py-3 mb-3", placeholder=form.name.label.text) }}
@@ -12,7 +15,11 @@
     {{ form.required(class="form-check-input") }}
     {{ form.required.label(class="form-check-label") }}     
     </div>  
-    {{ form.submit(class="btn btn-primary px-5 py-3") }}
+    {% if 'edit' in request.path %}
+    {{ form.submit(class="btn btn-primary px-5 py-3", value="Сохранить изменения") }}
+    {% else %}
+    {{ form.submit(class="btn btn-primary px-5 py-3", value="Добавить переменную") }}
+    {% endif %}
   </form>
 </div>
 {% endblock content %}

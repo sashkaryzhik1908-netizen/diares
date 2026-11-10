@@ -9,6 +9,7 @@
        href="{{ url_for('add_variable', category_id=category.id) }}">
         Добавить переменную
     </a>
+
     {% for variable in category.variables %}
         <div class="card mb-3">
             <div class="card-body">
@@ -22,7 +23,10 @@
                    href="{{ url_for('add_option', variable_id=variable.id) }}">
                     Добавить опцию
                 </a>
-
+                <a class="btn btn-outline-primary mb-3"
+                   href="{{ url_for('list_options', variable_id=variable.id) }}">
+                    Просмотреть опции
+                </a>
                 {% for option in variable.options %}
                     <p>
                         {{ option.value }} → {{ option.output_value }}

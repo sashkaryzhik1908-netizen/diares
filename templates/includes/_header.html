@@ -2,20 +2,57 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
     <a class="navbar-brand" href="{{ url_for('index') }}">Главная</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    
+      <ul class="navbar-nav">
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle"
+                           href="#"
+                           role="button"
+                           data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            <i class="bi bi-person-circle"></i>
+                            {% if not current_user.is_authenticated %}
+                            Пользователь
+                            {% else %}
+                            АДМИН 
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                          {% if not current_user.is_authenticated %}
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('login') }}">
+                                    Вход для админа
+                                </a>
+                            </li>
+                            {% else %}
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('logout') }}">
+                                    Выйти
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </li>
+
+                </ul>
   </div>
-</nav>
+</nav><br>
 <ul class="nav nav-underline">
+   {% if not current_user.is_authenticated %}
   <li class="nav-item">
-    <a class="nav-link" href="{{ url_for('list_diaries') }}">Список дневников</a>
+    <a class="btn btn-primary" href="{{ url_for('list_diaries') }}">Список дневников</a>
+  </li>
+  {% else %}
+  <li class="nav-item">
+    <a class="btn btn-primary" href="{{ url_for('list_diaries') }}" role="button">Список дневников</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="{{ url_for('add_category') }}">Редактировать шаблоны категорий</a>
+     <a class="btn btn-primary" href="{{ url_for('list_categories') }}" role="button">Добавить новые элементы категорий</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="{{ url_for('list_categories') }}">Добавить новые элементы категорий</a>
+     <a class="btn btn-primary" href="{{ url_for('add_drugs') }}" role="button">Добавить препараты</a>
   </li>
-</ul>
+  {% endif %}
+</ul><br>
 </div>

@@ -2,7 +2,11 @@
 
 {% block content %}
 <div class="container">
-  <h2>Добавление опции: {{ variable.label }}</h2>
+  {% if 'edit' in request.path %}
+    <h2>Редактирование опции: {{ variable.label }}</h2>
+  {% else %}
+    <h2>Добавление опции: {{ variable.label }}</h2>
+  {% endif %}
   <form method="POST">
     {{ form.csrf_token }}
     {{ form.value(class="form-control form-control-lg py-3 mb-3", placeholder=form.value.label.text) }}
