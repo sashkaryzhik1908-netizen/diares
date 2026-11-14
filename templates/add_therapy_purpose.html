@@ -1,0 +1,53 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+Добавление цели терапии
+{% endblock title %}
+
+{% block content %}
+<div class="container">
+
+    <h1 class="mb-4">Добавление цели терапии</h1>
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <div class="mb-3">
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control form-control-lg") }}
+
+            {% for error in form.name.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="mb-3">
+            {{ form.output_value.label(class="form-label") }}
+            {{ form.output_value(class="form-control form-control-lg") }}
+
+            {% for error in form.output_value.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="mb-3">
+            {{ form.order.label(class="form-label") }}
+            {{ form.order(class="form-control form-control-lg") }}
+
+            {% for error in form.order.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        {{ form.submit(class="btn btn-primary btn-lg") }}
+
+        <a href="{{ url_for('list_therapy_purposes') }}"
+           class="btn btn-secondary btn-lg">
+            Назад
+        </a>
+
+    </form>
+
+</div>
+{% endblock content %}

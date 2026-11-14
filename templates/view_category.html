@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}<title>Просмотр категории</title>{% endblock title %}
+{% block title %}Просмотр шаблонов{% endblock title %}
 {% block content %}
 <div class="container">
     <h1>{{ category.name }}</h1>
@@ -9,8 +9,7 @@
        href="{{ url_for('add_variable', category_id=category.id) }}">
         Добавить переменную
     </a>
-
-    {% for variable in category.variables %}
+    {% for variable in variables %}
         <div class="card mb-3">
             <div class="card-body">
                 <h4>{{ variable.label }}</h4>

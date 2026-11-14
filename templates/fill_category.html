@@ -1,8 +1,7 @@
-
 {% extends "base.html" %}
 
 {% block title %}
-<title>Заполнение категории</title>
+Создание дневника
 {% endblock title %}
 
 {% block content %}
@@ -20,99 +19,284 @@
 
     <form method="POST">
 
-        {% for variable in category.variables %}
+        {% if category.slug == "prescriptions" %}
 
-            <div class="card mb-3">
-                <div class="card-body">
+            <div id="prescription-rows">
 
-                    <label class="form-label fw-bold">
-                        {{ variable.label }}
-                    </label>
+                <div class="prescription-row border rounded p-3 mb-3"
+                     data-group-index="0">
 
-                    {% if variable.field_type == "select" %}
+                    <div class="mb-3">
+                        <label class="form-label">Цель терапии</label>
 
-                        <select
-                            class="form-select"
-                            name="{{ variable.name }}"
-                            {% if variable.required %}required{% endif %}
-                        >
-                            <option value="">Выберите вариант</option>
+                        <select name="purpose_id[0]"
+                                class="form-select"
+                                required>
 
-                            {% for option in variable.options|sort(attribute="order") %}
-                                <option
-                                    value="{{ option.value }}"
-                                    {% if values.get(variable.name) == option.output_value %}
-                                        selected
-                                    {% endif %}
+                            <option value="">Выберите цель терапии</option>
+
+                            {% for purpose in purposes %}
+                                <option value="{{ purpose.id }}">
+                                    {{ purpose.name }}
+                                </option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+
+                    <div class="medications-container">
+
+                        <label class="form-label">Препараты</label>
+
+                        <div class="medication-row row g-2 mb-2">
+
+                            <div class="col-md-6">
+                                <select name="medication_id[0][]"
+                                        class="form-select"
+                                        required>
+
+                                    <option value="">Выберите препарат</option>
+
+                                    {% for medication in medications %}
+                                        <option value="{{ medication.id }}">
+                                            {{ medication.name }}
+                                        </option>
+                                    {% endfor %}
+
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <input
+                                    type="text"
+                                    name="dose[0][]"
+                                    class="form-control"
+                                    placeholder="Например: 500 мг"
+                                    required
                                 >
-                                    {{ option.value }}
-                                </option>
-                            {% endfor %}
-                        </select>
+                            </div>
 
-                    {% elif variable.field_type == "multiselect" %}
+                            <div class="col-md-2">
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-danger remove-medication"
+                                >
+                                    Удалить
+                                </button>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn btn-outline-primary btn-sm mb-3 add-medication"
+                    >
+                        Добавить препарат
+                    </button>
+
+                    <hr>
+
+                    <div class="mb-3">
+                        <label class="form-label">Способ введения</label>
 
                         <select
-                            class="form-select mb-3"
-                            id="select_{{ variable.name }}"
+                            name="administration_method[0]"
+                            class="form-select"
+                            required
                         >
-                            <option value="">Выберите вариант</option>
+                            <option value="">Выберите способ введения</option>
 
-                            {% for option in variable.options|sort(attribute="order") %}
-                                <option value="{{ option.id }}">
-                                    {{ option.value }}
+                            <option value="внутривенно">Внутривенно</option>
+
+                            <option value="внутривенно капельно">
+                                Внутривенно капельно
+                            </option>
+
+                            <option value="внутривенно, путём микроструйной перфузионной подачи">
+                                Внутривенно, путём микроструйной перфузионной подачи
+                            </option>
+
+                            <option value="внутримышечно">Внутримышечно</option>
+                            <option value="подкожно">Подкожно</option>
+                            <option value="перорально">Перорально</option>
+
+                            <option value="через назогастральный зонд">
+                                Через назогастральный зонд
+                            </option>
+
+                            <option value="ингаляционно">Ингаляционно</option>
+                            <option value="наружно">Наружно</option>
+
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Кратность</label>
+
+                        <select name="frequency[0]"
+                                class="form-select"
+                                required>
+
+                            <option value="">Выберите кратность</option>
+
+                            {% for number in range(1, 11) %}
+                                <option value="{{ number }} р/д">
+                                    {{ number }} р/д
                                 </option>
                             {% endfor %}
+
+                            <option value="непрерывно">
+                                Непрерывно
+                            </option>
+
                         </select>
+                    </div>
 
-                        <button
-                            type="button"
-                            class="btn btn-outline-primary mb-3"
-                            onclick="addOption('{{ variable.name }}')"
-                        >
-                            Добавить
-                        </button>
-
-                        <ul
-                            class="list-group mb-3"
-                            id="selected_{{ variable.name }}"
-                        ></ul>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            Дата начала
+                            <span class="text-muted">
+                                (необязательное поле)
+                            </span>
+                        </label>
 
                         <input
-                            type="hidden"
-                            name="{{ variable.name }}"
-                            id="result_{{ variable.name }}"
-                        >
-
-                    {% elif variable.field_type == "text" %}
-
-                        <input
-                            type="text"
+                            type="date"
+                            name="start_date[0]"
                             class="form-control"
-                            name="{{ variable.name }}"
-                            value="{{ values.get(variable.name, '') }}"
-                            {% if variable.required %}required{% endif %}
                         >
+                    </div>
 
-                    {% elif variable.field_type == "number" %}
-
-                        <input
-                            type="number"
-                            step="any"
-                            class="form-control"
-                            name="{{ variable.name }}"
-                            value="{{ values.get(variable.name, '') }}"
-                            {% if variable.required %}required{% endif %}
-                        >
-
-                    {% endif %}
+                    <button
+                        type="button"
+                        class="btn btn-outline-danger remove-prescription"
+                    >
+                        Удалить назначение
+                    </button>
 
                 </div>
+
             </div>
 
-        {% endfor %}
+            <button
+                type="button"
+                id="add-prescription"
+                class="btn btn-outline-primary mb-3"
+            >
+                Добавить назначение
+            </button>
+
+        {% else %}
+
+            {% for variable in variables %}
+
+                <div class="card mb-3">
+                    <div class="card-body">
+
+                        <label class="form-label fw-bold">
+                            {{ variable.label }}
+                        </label>
+
+                        {% if variable.field_type == "select" %}
+
+                            <select
+                                class="form-select"
+                                name="{{ variable.name }}"
+                                {% if variable.required %}required{% endif %}
+                            >
+                                <option value="">Выберите вариант</option>
+
+                                {% for option in variable.options|sort(attribute="order") %}
+                                    <option
+                                        value="{{ option.value }}"
+                                        {% if form_data.get(variable.name, [''])[0] == option.value %}
+                                            selected
+                                        {% endif %}
+                                    >
+                                        {{ option.value }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+
+                        {% elif variable.field_type == "multiselect" %}
+
+                            <select
+                                class="form-select mb-3"
+                                id="select_{{ variable.name }}"
+                            >
+                                <option value="">Выберите вариант</option>
+
+                                {% for option in variable.options|sort(attribute="order") %}
+                                    <option value="{{ option.id }}">
+                                        {{ option.value }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+
+                            <button
+                                type="button"
+                                class="btn btn-outline-primary mb-3"
+                                onclick="addOption('{{ variable.name }}')"
+                            >
+                                Добавить
+                            </button>
+
+                            <ul
+                                class="list-group mb-3"
+                                id="selected_{{ variable.name }}"
+                            ></ul>
+
+                            <input
+                                type="hidden"
+                                name="{{ variable.name }}"
+                                id="result_{{ variable.name }}"
+                                value="{{ form_data.get(variable.name, [''])[0] }}"
+                            >
+
+                        {% elif variable.field_type == "text" %}
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                name="{{ variable.name }}"
+                                value="{{ form_data.get(variable.name, [''])[0] }}"
+                                {% if variable.required %}required{% endif %}
+                            >
+
+                        {% elif variable.field_type == "date" %}
+
+                            <input
+                                type="date"
+                                class="form-control"
+                                name="{{ variable.name }}"
+                                value="{{ form_data.get(variable.name, [''])[0] }}"
+                                {% if variable.required %}required{% endif %}
+                            >
+
+                        {% elif variable.field_type == "number" %}
+
+                            <input
+                                type="number"
+                                step="any"
+                                class="form-control"
+                                name="{{ variable.name }}"
+                                value="{{ form_data.get(variable.name, [''])[0] }}"
+                                {% if variable.required %}required{% endif %}
+                            >
+
+                        {% endif %}
+
+                    </div>
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
 
         {% if category.slug == "complaints" %}
+
             <div class="card mb-3">
                 <div class="card-body">
 
@@ -125,10 +309,11 @@
                         name="custom_complaints"
                         rows="3"
                         placeholder="Введите дополнительные жалобы..."
-                    >{{ values.get('custom_complaints', '') }}</textarea>
+                    >{{ form_data.get('custom_complaints', [''])[0] }}</textarea>
 
                 </div>
             </div>
+
         {% endif %}
 
         <button type="submit" class="btn btn-success">
@@ -138,18 +323,46 @@
     </form>
 
     {% if generated_text %}
+
         <div class="card mt-4">
             <div class="card-body">
                 <h4>Результат</h4>
-                <p>{{ generated_text }}</p>
+                <p style="white-space: pre-line;">{{ generated_text }}</p>
             </div>
         </div>
+
     {% endif %}
 
 </div>
 
+<style>
+    .medication-row {
+        position: relative;
+    }
+
+    .medication-row + .medication-row {
+        margin-top: 30px;
+    }
+
+    .medication-row + .medication-row::before {
+        content: "+";
+        position: absolute;
+        left: 0;
+        top: -29px;
+        font-size: 22px;
+        font-weight: bold;
+        color: #6c757d;
+    }
+</style>
+
 <script>
+
+// ==========================================
+// MULTISELECT
+// ==========================================
+
 function addOption(variableName) {
+
     const select = document.getElementById("select_" + variableName);
     const list = document.getElementById("selected_" + variableName);
     const result = document.getElementById("result_" + variableName);
@@ -179,6 +392,7 @@ function addOption(variableName) {
     upButton.type = "button";
     upButton.className = "btn btn-sm btn-outline-secondary me-1";
     upButton.textContent = "↑";
+
     upButton.onclick = function () {
         moveUp(item);
     };
@@ -187,6 +401,7 @@ function addOption(variableName) {
     downButton.type = "button";
     downButton.className = "btn btn-sm btn-outline-secondary me-1";
     downButton.textContent = "↓";
+
     downButton.onclick = function () {
         moveDown(item);
     };
@@ -195,6 +410,7 @@ function addOption(variableName) {
     removeButton.type = "button";
     removeButton.className = "btn btn-sm btn-outline-danger";
     removeButton.textContent = "Удалить";
+
     removeButton.onclick = function () {
         item.remove();
         updateResult(list, result);
@@ -210,6 +426,7 @@ function addOption(variableName) {
 
 
 function moveUp(item) {
+
     const previous = item.previousElementSibling;
 
     if (previous) {
@@ -225,6 +442,7 @@ function moveUp(item) {
 
 
 function moveDown(item) {
+
     const next = item.nextElementSibling;
 
     if (next) {
@@ -240,12 +458,320 @@ function moveDown(item) {
 
 
 function updateResult(list, result) {
+
     const selectedIds = Array.from(list.children).map(
         item => item.dataset.id
     );
 
     result.value = selectedIds.join(",");
 }
+
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    document.querySelectorAll('[id^="result_"]').forEach(result => {
+
+        const variableName = result.id.replace("result_", "");
+        const select = document.getElementById("select_" + variableName);
+        const list = document.getElementById("selected_" + variableName);
+
+        if (!select || !list || !result.value) return;
+
+        const selectedIds = result.value.split(",");
+
+        selectedIds.forEach(optionId => {
+
+            const option = Array.from(select.options).find(
+                item => item.value === optionId
+            );
+
+            if (option) {
+                select.value = optionId;
+                addOption(variableName);
+            }
+
+        });
+
+    });
+
+});
+
+
+// ==========================================
+// НАЗНАЧЕНИЯ
+// ==========================================
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const container = document.getElementById("prescription-rows");
+    const addButton = document.getElementById("add-prescription");
+
+    if (!container || !addButton) return;
+
+    const savedFormData = {{ form_data|tojson }};
+
+
+    // Получение первого сохранённого значения
+    function getSavedValue(name) {
+        return savedFormData[name]?.[0] || "";
+    }
+
+
+    // Получение списка сохранённых значений
+    function getSavedList(name) {
+        return savedFormData[name] || [];
+    }
+
+
+    // Обновление имён полей группы
+    function updateGroupNames(row, index) {
+
+        row.dataset.groupIndex = index;
+
+        row.querySelector('[name^="purpose_id"]').name =
+            `purpose_id[${index}]`;
+
+        row.querySelector('[name^="administration_method"]').name =
+            `administration_method[${index}]`;
+
+        row.querySelector('[name^="frequency"]').name =
+            `frequency[${index}]`;
+
+        row.querySelector('[name^="start_date"]').name =
+            `start_date[${index}]`;
+
+        row.querySelectorAll(".medication-row").forEach(medicationRow => {
+
+            medicationRow.querySelector("select").name =
+                `medication_id[${index}][]`;
+
+            medicationRow.querySelector("input").name =
+                `dose[${index}][]`;
+
+        });
+
+    }
+
+
+    // Перенумерация групп
+    function reindexGroups() {
+
+        container.querySelectorAll(".prescription-row").forEach(
+            (row, index) => updateGroupNames(row, index)
+        );
+
+    }
+
+
+    // Восстановление сохранённых групп
+    function restoreGroups() {
+
+        const purposeKeys = Object.keys(savedFormData)
+            .filter(key => /^purpose_id\[\d+\]$/.test(key))
+            .sort((a, b) => {
+                const indexA = Number(a.match(/\d+/)[0]);
+                const indexB = Number(b.match(/\d+/)[0]);
+
+                return indexA - indexB;
+            });
+
+        if (!purposeKeys.length) return;
+
+        const templateRow = container
+            .querySelector(".prescription-row")
+            .cloneNode(true);
+
+        container.innerHTML = "";
+
+        purposeKeys.forEach((key, groupPosition) => {
+
+            const oldIndex = key.match(/\d+/)[0];
+
+            const row = templateRow.cloneNode(true);
+
+            const purposeSelect = row.querySelector(
+                '[name^="purpose_id"]'
+            );
+
+            const methodSelect = row.querySelector(
+                '[name^="administration_method"]'
+            );
+
+            const frequencySelect = row.querySelector(
+                '[name^="frequency"]'
+            );
+
+            const dateInput = row.querySelector(
+                '[name^="start_date"]'
+            );
+
+            purposeSelect.value = getSavedValue(
+                `purpose_id[${oldIndex}]`
+            );
+
+            methodSelect.value = getSavedValue(
+                `administration_method[${oldIndex}]`
+            );
+
+            frequencySelect.value = getSavedValue(
+                `frequency[${oldIndex}]`
+            );
+
+            dateInput.value = getSavedValue(
+                `start_date[${oldIndex}]`
+            );
+
+            const medicationIds = getSavedList(
+                `medication_id[${oldIndex}][]`
+            );
+
+            const doses = getSavedList(
+                `dose[${oldIndex}][]`
+            );
+
+            const medicationsContainer = row.querySelector(
+                ".medications-container"
+            );
+
+            const medicationTemplate = medicationsContainer
+                .querySelector(".medication-row")
+                .cloneNode(true);
+
+            medicationsContainer.innerHTML = "";
+
+            medicationIds.forEach((medicationId, medicationIndex) => {
+
+                const medicationRow = medicationTemplate.cloneNode(true);
+
+                medicationRow.querySelector("select").value =
+                    medicationId;
+
+                medicationRow.querySelector("input").value =
+                    doses[medicationIndex] || "";
+
+                medicationsContainer.appendChild(medicationRow);
+
+            });
+
+            if (!medicationIds.length) {
+
+                medicationsContainer.appendChild(
+                    medicationTemplate.cloneNode(true)
+                );
+
+            }
+
+            container.appendChild(row);
+
+            updateGroupNames(row, groupPosition);
+
+        });
+
+    }
+
+
+    // Обработка кнопок внутри групп
+    container.addEventListener("click", function (event) {
+
+        // Добавление препарата
+        if (event.target.closest(".add-medication")) {
+
+            const group = event.target.closest(".prescription-row");
+
+            const medicationsContainer =
+                group.querySelector(".medications-container");
+
+            const firstMedication =
+                medicationsContainer.querySelector(".medication-row");
+
+            const newMedication = firstMedication.cloneNode(true);
+
+            newMedication.querySelector("select").selectedIndex = 0;
+            newMedication.querySelector("input").value = "";
+
+            medicationsContainer.appendChild(newMedication);
+
+            reindexGroups();
+
+        }
+
+
+        // Удаление препарата
+        if (event.target.closest(".remove-medication")) {
+
+            const group = event.target.closest(".prescription-row");
+
+            const rows = group.querySelectorAll(".medication-row");
+
+            if (rows.length > 1) {
+
+                event.target.closest(".medication-row").remove();
+
+                reindexGroups();
+
+            }
+
+        }
+
+
+        // Удаление назначения
+        if (event.target.closest(".remove-prescription")) {
+
+            const rows = container.querySelectorAll(".prescription-row");
+
+            if (rows.length > 1) {
+
+                event.target.closest(".prescription-row").remove();
+
+                reindexGroups();
+
+            }
+
+        }
+
+    });
+
+
+    // Добавление новой группы назначения
+    addButton.addEventListener("click", function () {
+
+        const firstRow = container.querySelector(".prescription-row");
+
+        const newRow = firstRow.cloneNode(true);
+
+        const medicationRows =
+            newRow.querySelectorAll(".medication-row");
+
+        medicationRows.forEach((row, index) => {
+
+            if (index > 0) {
+                row.remove();
+            }
+
+        });
+
+        newRow.querySelectorAll("input").forEach(input => {
+            input.value = "";
+        });
+
+        newRow.querySelectorAll("select").forEach(select => {
+            select.selectedIndex = 0;
+        });
+
+        container.appendChild(newRow);
+
+        reindexGroups();
+
+    });
+
+
+    // Восстанавливаем данные перед начальной нумерацией
+    restoreGroups();
+
+    reindexGroups();
+
+});
+
 </script>
 
 {% endblock content %}

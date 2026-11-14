@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-<title>Дневник №{{ diary.id }}</title>
+Дневник №{{ diary.id }}
 {% endblock title %}
 
 {% block content %}
@@ -43,12 +43,22 @@
     <h3 class="mb-3">Содержимое дневника</h3>
 
     {% for entry in diary.entries %}
-                <p>{{ entry.text }}</p>
+
+    {% if entry.category.slug == "prescriptions" and syndromes %}
+        <p>Ведущие патологические синдромы</p>
+
+        {% for syndrome in syndromes %}
+            <ul class="mb-1">{{ syndrome }}</ul>
+    {% endfor %}<br>
+    {% endif %}
+
+    <p style="white-space: pre-line;">{{ entry.text }}</p>
+
     {% else %}
-        <p class="text-muted">
-            Дневник пока пуст.
-        </p>
-    {% endfor %}
+    <p class="text-muted">
+        Дневник пока пуст.
+    </p>
+{% endfor %}
 
     <a href="{{ url_for('list_diaries') }}"
        class="btn btn-secondary mt-3">

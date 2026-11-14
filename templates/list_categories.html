@@ -1,11 +1,16 @@
 {% extends "base.html" %}
-{% block title %}<title>My Study Diaries</title>{% endblock title %}
+{% block title %}Список шаблонов{% endblock title %}
 {% block content %}
+<div class="container">
+  
+      <a class="btn btn-outline-primary" href="{{ url_for('add_category') }}">Создать шаблон категории</a>
+    
+</div><hr><br>
 {% for category in categories %}
   <div class="container">
-    <li class="nav-item">
+    
       <a class="btn btn-outline-primary" href="{{ url_for('edit_category', category_id=category.id) }}">Редактировать шаблон категории</a>
-    </li>
+    
     <h2>{{ category.name }}</h2>
     <p>{{ category.template }}</p>
     <a href="{{ url_for('view_category', category_id=category.id) }}">Редактировать переменые и опции</a>

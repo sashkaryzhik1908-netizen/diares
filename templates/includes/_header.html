@@ -48,11 +48,18 @@
     <a class="btn btn-primary" href="{{ url_for('list_diaries') }}" role="button">Список дневников</a>
   </li>
   <li class="nav-item">
-     <a class="btn btn-primary" href="{{ url_for('list_categories') }}" role="button">Добавить новые элементы категорий</a>
+     <a class="btn btn-primary" href="{{ url_for('list_categories') }}" role="button">Редактор шаблонов</a>
   </li>
   <li class="nav-item">
-     <a class="btn btn-primary" href="{{ url_for('add_drugs') }}" role="button">Добавить препараты</a>
-  </li>
+    <a class="btn btn-primary" href="{{ url_for('list_therapy_purposes') }}" role="button">
+        Цели терапии
+    </a>
+</li>
+<li class="nav-item">
+    <a class="btn btn-primary" href="{{ url_for('list_therapy_medications') }}" role="button">
+        Препараты
+    </a>
+</li>
   {% endif %}
 </ul><br>
 </div>

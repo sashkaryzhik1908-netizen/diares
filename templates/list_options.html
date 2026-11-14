@@ -1,32 +1,54 @@
+ 
 {% extends "base.html" %}
-{% block title %}<title>List Options</title>{% endblock title %}
+
+{% block title %}Список опций{% endblock title %}
+
 {% block content %}
 <div class="container">
-  <h2>Опции для переменной: {{ variable.label }}</h2><br>
-</div>
-<div class="container">
-  <form action="{{ url_for('edit_variable', variable_id=variable.id) }}" method="POST">
-    <button class="btn btn-primary btn-sm">
+    <h2>Опции для переменной: {{ variable.label }}</h2>
+    <br>
+
+    <a href="{{ url_for('edit_variable', variable_id=variable.id) }}"
+       class="btn btn-primary btn-sm">
         Редактировать переменную
-    </button>
-</form><br>
-  <form action="{{ url_for('del_variable', variable_id=variable.id) }}" method="POST">
-    <button class="btn btn-danger btn-sm" 
-            onclick="return confirm('Вы уверены, что хотите удалить переменную?')">
-        Удалить переменную
-    </button>
-</form><br><hr>
+    </a>
+
+    <form action="{{ url_for('del_variable', variable_id=variable.id) }}"
+          method="POST"
+          style="display: inline;">
+        <button type="submit"
+                class="btn btn-danger btn-sm"
+                onclick="return confirm('Вы уверены, что хотите удалить переменную?')">
+            Удалить переменную
+        </button>
+    </form>
+
+    <br><hr>
+
+    {% for option in options %}
+    <div>
+        <h4>
+            {{ option.value }}
+
+            <a href="{{ url_for('edit_option', variable_id=variable.id, option_id=option.id) }}"
+               class="btn btn-primary btn-sm">
+                Редактировать опцию
+            </a>
+
+            <form action="{{ url_for('delete_option', variable_id=variable.id, option_id=option.id) }}"
+                  method="POST"
+                  style="display: inline;">
+                <button type="submit"
+                        class="btn btn-danger btn-sm"
+                        onclick="return confirm('Вы уверены, что хотите удалить опцию?')">
+                    Удалить опцию
+                </button>
+            </form>
+        </h4>
+
+        <p>{{ option.output_value }}</p>
+        <hr>
+    </div>
+    {% endfor %}
 </div>
-{% for option in options %}
-  <div class="container">
-    <h4>{{ option.value }}
-    <a href="{{ url_for('edit_option', variable_id=variable.id,option_id=option.id) }}" class="btn btn-primary btn-sm">Редактировать опцию
-    </a>
-    <a href="{{ url_for('delete_option', variable_id=variable.id,option_id=option.id) }}" class="btn btn-danger btn-sm">Удалить опцию
-    </a>
-    </h4>
-    <p>{{ option.output_value }}</p>
-    <hr>
-  </div>
-{% endfor %}
 {% endblock content %}

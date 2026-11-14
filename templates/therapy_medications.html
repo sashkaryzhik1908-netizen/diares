@@ -1,0 +1,48 @@
+ 
+{% extends "base.html" %}
+
+{% block title %}
+    Справочник препаратов
+{% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Справочник препаратов</h1>
+        <a href="{{ url_for('add_therapy_medication') }}" class="btn btn-primary">
+            Добавить препарат
+        </a>
+    </div>
+
+    {% if medications %}
+        <div class="list-group">
+            {% for medication in medications %}
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>{{ medication.name }}</span>
+
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('edit_therapy_medication', medication_id=medication.id) }}"
+                           class="btn btn-warning btn-sm">
+                            Редактировать
+                        </a>
+
+                        <form method="POST"
+                              action="{{ url_for('delete_therapy_medication', medication_id=medication.id) }}">
+                            {{ delete_form.hidden_tag() }}
+
+                            <button type="submit" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Удалить препарат?')">
+                                Удалить
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-muted">Список препаратов пока пуст.</p>
+    {% endif %}
+
+</div>
+{% endblock content %}
